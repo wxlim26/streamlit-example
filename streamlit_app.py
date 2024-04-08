@@ -8,8 +8,9 @@ credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"]
 )
 
-client = bigquery.Client(credentials=credentials, project=credentials.project_id)
 project_id = credentials.project_id
+client = bigquery.Client(credentials=credentials, project=credentials.project_id)
+
 
 # Perform query.
 query = """SELECT * FROM bt4301.ttao.salaries LIMIT 10"""
