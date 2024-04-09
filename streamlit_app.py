@@ -14,7 +14,24 @@ client = bigquery.Client(credentials=credentials, project=credentials.project_id
 st.write(project_id)
 st.caption('test')
 # Perform query.
-query = """SELECT * FROM bt4301.ttao.salaries LIMIT 10"""
+# query = """SELECT * FROM bt4301.ttao.salaries LIMIT 10"""
 
-salary_df = pd_gbq.read_gbq(query, project_id= project_id)
-st.dataframe(salary_df)
+# salary_df = pd_gbq.read_gbq(query, project_id= project_id)
+# st.dataframe(salary_df)
+
+# Perform query.
+# Uses st.cache_data to only rerun when the query changes or after 10 min.
+@st.cache_data(ttl=600)
+def run_query(query):
+    query_job = client.query(query)
+    rows_raw = query_job.result()
+    # Convert to list of dicts. Required for st.cache_data to hash the return value.
+    rows = [dict(row) for row in rows_raw]
+    return rows
+
+rows = run_query("""SELECT * FROM bt4301.ttao.salaries LIMIT 10""")
+
+# Print results.
+st.write("Some wise words from Shakespeare:")
+for row in rows:
+    st.write(row)
